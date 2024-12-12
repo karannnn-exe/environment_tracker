@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Manager</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1 class="mt-5">Environment Manager</h1>
+    <form method="POST" action="/add" class="mb-4">
+        <input type="text" name="env_name" placeholder="New Environment Name" required>
+        <button type="submit" class="btn btn-primary">Add Environment</button>
+    </form>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-dismissible fade show" role="alert">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Environment Name</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for env, status in environments.items() %}
+                <tr>
+                    <td>{{ env }}</td>
+                    <td>{{ 'Checked Out' if status else 'Available' }}</td>
+                    <td>
+                        {% if status %}
+                            <form method="POST" action="/return/{{ env }}" style="display:inline
+;">
+                                <button type="submit" class="btn btn-danger">Return</button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="/checkout/{{ env }}" style="display:inline;">
+                                <button type="submit" class="btn btn-success">Checkout</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <form method="POST" action="/logout" class="mb-4">
+        <input type="hidden" name="username" value="{{ username }}">
+        <button type="submit" class="btn btn-primary">Logout</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script
+>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
